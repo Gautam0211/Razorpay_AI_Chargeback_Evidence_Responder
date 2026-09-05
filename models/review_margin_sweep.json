@@ -1,0 +1,89 @@
+{
+  "dataset": "validation",
+  "fight_cost_flat": 300.0,
+  "margin_candidates": [
+    0,
+    50,
+    100,
+    150,
+    200,
+    300,
+    400,
+    500
+  ],
+  "results": [
+    {
+      "review_margin": 0,
+      "pct_fight": 47.10854092526691,
+      "pct_concede": 52.89145907473309,
+      "pct_manual_review": 0.0,
+      "money_left_on_table": 177633.92,
+      "fight_loss_cost": 132300.0,
+      "total_cost": 309933.92000000004
+    },
+    {
+      "review_margin": 50,
+      "pct_fight": 41.770462633451956,
+      "pct_concede": 45.90747330960854,
+      "pct_manual_review": 12.322064056939503,
+      "money_left_on_table": 131563.43,
+      "fight_loss_cost": 114600.0,
+      "total_cost": 246163.43
+    },
+    {
+      "review_margin": 100,
+      "pct_fight": 36.43238434163701,
+      "pct_concede": 36.87722419928826,
+      "pct_manual_review": 26.690391459074732,
+      "money_left_on_table": 88010.48,
+      "fight_loss_cost": 97200.0,
+      "total_cost": 185210.47999999998
+    },
+    {
+      "review_margin": 150,
+      "pct_fight": 32.33985765124555,
+      "pct_concede": 26.201067615658364,
+      "pct_manual_review": 41.45907473309609,
+      "money_left_on_table": 47028.13,
+      "fight_loss_cost": 86400.0,
+      "total_cost": 133428.13
+    },
+    {
+      "review_margin": 200,
+      "pct_fight": 28.46975088967972,
+      "pct_concede": 16.32562277580071,
+      "pct_manual_review": 55.20462633451957,
+      "money_left_on_table": 24102.28,
+      "fight_loss_cost": 75000.0,
+      "total_cost": 99102.28
+    },
+    {
+      "review_margin": 300,
+      "pct_fight": 22.6423487544484,
+      "pct_concede": 0.0,
+      "pct_manual_review": 77.35765124555161,
+      "money_left_on_table": 0.0,
+      "fight_loss_cost": 59100.0,
+      "total_cost": 59100.0
+    },
+    {
+      "review_margin": 400,
+      "pct_fight": 18.95017793594306,
+      "pct_concede": 0.0,
+      "pct_manual_review": 81.04982206405694,
+      "money_left_on_table": 0.0,
+      "fight_loss_cost": 48600.0,
+      "total_cost": 48600.0
+    },
+    {
+      "review_margin": 500,
+      "pct_fight": 15.61387900355872,
+      "pct_concede": 0.0,
+      "pct_manual_review": 84.38612099644128,
+      "money_left_on_table": 0.0,
+      "fight_loss_cost": 39900.0,
+      "total_cost": 39900.0
+    }
+  ],
+  "lowest_validation_cost_margin": 500
+}

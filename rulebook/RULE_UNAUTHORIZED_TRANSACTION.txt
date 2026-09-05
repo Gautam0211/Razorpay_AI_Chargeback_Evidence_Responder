@@ -1,0 +1,18 @@
+Reason Code: Unauthorized Transaction
+
+This reason code applies when a cardholder claims they did not authorize the transaction (potential card fraud/theft).
+
+REQUIRED EVIDENCE TO CONTEST:
+- Confirmation that a valid authentication step occurred at the time of purchase (e.g. OTP/3D Secure verification passed). This is the primary evidence for this reason code, since a successfully completed authentication step strongly indicates the legitimate cardholder approved the transaction.
+- Device and IP information consistent with the cardholder's prior purchase history, where available.
+- Billing address match with the shipping address, as a secondary signal of legitimacy.
+
+EVIDENCE THAT IS NOT SUFFICIENT ALONE:
+- A successful payment capture alone does not prove authorization; payment processing can succeed even on a stolen card if no additional authentication step was performed.
+- Delivery confirmation is not directly relevant evidence for this reason code; a fraudulent transaction can still be delivered successfully.
+
+IF AUTHENTICATION CANNOT BE CONFIRMED:
+Treat as high fraud risk. Without a confirmed OTP/3DS step, the transaction should generally not be contested.
+
+RESPONSE FORMAT:
+State clearly whether OTP/3D Secure authentication was completed, and reference any matching device/IP or address history. Do not rely on delivery or payment-capture evidence as the primary argument.

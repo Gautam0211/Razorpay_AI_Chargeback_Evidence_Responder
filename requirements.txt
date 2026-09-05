@@ -1,0 +1,26 @@
+numpy
+pandas
+faker
+scikit-learn
+xgboost
+shap
+
+# RAG / vector store
+chromadb
+sentence-transformers
+
+# LLM + orchestration
+huggingface_hub
+langgraph
+langchain
+langchain-community
+requests
+
+# Eval
+deepeval
+
+# UI
+gradio
+
+# Utils
+python-dotenv

@@ -1,0 +1,8 @@
+{
+  "n_with_rule": 120,
+  "recall_at_8": 1.0,
+  "recall_at_3": 1.0,
+  "precision_at_3": 1.0,
+  "n_unknown": 15,
+  "unknown_correct_fallback_rate": 1.0
+}

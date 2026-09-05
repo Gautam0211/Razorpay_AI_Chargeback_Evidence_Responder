@@ -1,0 +1,16 @@
+dispute_id,order_id,reason_code,dispute_date,days_to_dispute,status,true_win_probability,outcome_true,correct_relevant_chunk_id,expected_trajectory,prior_dispute_count_at_time,is_unknown_reason_edge_case,customer_id,amount,item_category,purchase_date,delivery_confirmed,delivery_date,otp_auth_confirmed,shipping_billing_match,prior_complaint_on_file
+DSP-01732,ORD-00741,other_unclassified,2026-04-05,10,pending,0.6629,True,NONE,manual_review_fallback,1,True,CUST-00411,872.24,apparel,2026-03-26,True,2026-03-28,True,True,False
+DSP-02678,ORD-11789,other_unclassified,2026-04-15,19,pending,0.6112,True,NONE,manual_review_fallback,0,True,CUST-04300,1873.33,groceries,2026-03-27,True,2026-03-29,True,True,True
+DSP-02949,ORD-15468,other_unclassified,2026-04-18,8,pending,0.3539,False,NONE,manual_review_fallback,0,True,CUST-03357,1297.58,digital_goods,2026-04-10,True,2026-04-19,False,True,True
+DSP-03699,ORD-01959,other_unclassified,2026-04-26,24,pending,0.1745,False,NONE,manual_review_fallback,5,True,CUST-03365,770.91,apparel,2026-04-02,False,,True,False,False
+DSP-04339,ORD-12484,other_unclassified,2026-05-02,20,pending,0.0756,False,NONE,manual_review_fallback,1,True,CUST-04416,1544.55,groceries,2026-04-12,False,,True,True,False
+DSP-05036,ORD-18112,other_unclassified,2026-05-09,6,pending,0.5796,True,NONE,manual_review_fallback,1,True,CUST-02515,1115.15,groceries,2026-05-03,True,2026-05-06,True,True,False
+DSP-05399,ORD-14224,other_unclassified,2026-05-13,13,pending,0.02,False,NONE,manual_review_fallback,3,True,CUST-05965,665.9,electronics,2026-04-30,False,,False,False,False
+DSP-05585,ORD-02054,other_unclassified,2026-05-15,5,pending,0.5085,False,NONE,manual_review_fallback,0,True,CUST-00391,502.0,digital_goods,2026-05-10,True,2026-05-14,False,True,False
+DSP-07115,ORD-10582,other_unclassified,2026-05-31,6,pending,0.5155,True,NONE,manual_review_fallback,1,True,CUST-00008,1083.51,groceries,2026-05-25,False,,True,True,False
+DSP-07382,ORD-00880,other_unclassified,2026-06-02,23,pending,0.1695,False,NONE,manual_review_fallback,3,True,CUST-03900,163.95,apparel,2026-05-10,True,2026-05-13,False,True,False
+DSP-08547,ORD-12163,other_unclassified,2026-06-14,13,pending,0.5898,False,NONE,manual_review_fallback,0,True,CUST-00983,1755.16,apparel,2026-06-01,True,2026-06-08,False,True,False
+DSP-09339,ORD-13312,other_unclassified,2026-06-22,5,pending,0.4261,False,NONE,manual_review_fallback,5,True,CUST-01168,217.51,digital_goods,2026-06-17,True,2026-06-25,True,True,False
+DSP-12714,ORD-01863,other_unclassified,2026-07-27,8,pending,0.6464,True,NONE,manual_review_fallback,0,True,CUST-02029,2574.35,groceries,2026-07-19,True,2026-07-27,True,True,False
+DSP-13791,ORD-13842,other_unclassified,2026-08-07,12,pending,0.2308,False,NONE,manual_review_fallback,2,True,CUST-01762,275.39,home_goods,2026-07-26,False,,True,True,False
+DSP-14752,ORD-19606,other_unclassified,2026-08-20,17,pending,0.1894,False,NONE,manual_review_fallback,4,True,CUST-04565,2241.35,digital_goods,2026-08-03,True,2026-08-12,False,True,False

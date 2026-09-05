@@ -1,0 +1,18 @@
+[
+  "amount",
+  "days_to_dispute",
+  "prior_dispute_count_at_time",
+  "delivery_confirmed",
+  "otp_auth_confirmed",
+  "shipping_billing_match",
+  "prior_complaint_on_file",
+  "reason_code_duplicate_charge",
+  "reason_code_item_not_received",
+  "reason_code_not_as_described",
+  "reason_code_unauthorized_transaction",
+  "item_category_apparel",
+  "item_category_digital_goods",
+  "item_category_electronics",
+  "item_category_groceries",
+  "item_category_home_goods"
+]

@@ -1,0 +1,10 @@
+{
+  "test_roc_auc": 0.6849000203450424,
+  "test_pr_auc": 0.6456696663998363,
+  "threshold": 0.23223223223223222,
+  "threshold_strategy": "cost_optimal",
+  "fight_cost_flat": 300.0,
+  "n_train": 10489,
+  "n_val": 2248,
+  "n_test": 2248
+}

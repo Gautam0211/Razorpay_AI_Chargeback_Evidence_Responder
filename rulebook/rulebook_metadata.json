@@ -1,0 +1,30 @@
+[
+  {
+    "chunk_id": "RULE_NOT_AS_DESCRIBED",
+    "reason_code": "not_as_described",
+    "title": "Reason Code: Not As Described",
+    "source_file": "RULE_NOT_AS_DESCRIBED.txt",
+    "char_count": 1264
+  },
+  {
+    "chunk_id": "RULE_ITEM_NOT_RECEIVED",
+    "reason_code": "item_not_received",
+    "title": "Reason Code: Item Not Received",
+    "source_file": "RULE_ITEM_NOT_RECEIVED.txt",
+    "char_count": 1375
+  },
+  {
+    "chunk_id": "RULE_UNAUTHORIZED_TRANSACTION",
+    "reason_code": "unauthorized_transaction",
+    "title": "Reason Code: Unauthorized Transaction",
+    "source_file": "RULE_UNAUTHORIZED_TRANSACTION.txt",
+    "char_count": 1358
+  },
+  {
+    "chunk_id": "RULE_DUPLICATE_CHARGE",
+    "reason_code": "duplicate_charge",
+    "title": "Reason Code: Duplicate Charge",
+    "source_file": "RULE_DUPLICATE_CHARGE.txt",
+    "char_count": 1393
+  }
+]

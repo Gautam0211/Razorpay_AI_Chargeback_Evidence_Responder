@@ -1,0 +1,5 @@
+{
+  "threshold": 0.23223223223223222,
+  "strategy": "cost_optimal",
+  "fight_cost_flat": 300.0
+}

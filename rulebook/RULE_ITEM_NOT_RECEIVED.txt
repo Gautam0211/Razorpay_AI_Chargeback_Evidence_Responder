@@ -1,0 +1,17 @@
+Reason Code: Item Not Received
+
+This reason code applies when a cardholder claims they paid for goods or services but never received them.
+
+REQUIRED EVIDENCE TO CONTEST:
+- Valid proof of delivery: carrier tracking number showing delivered status, ideally with a signature or delivery photo, to an address matching the billing/shipping address on file.
+- Delivery date must be reasonably consistent with the order timeline; delivery confirmation is the single most important piece of evidence for this reason code and effectively determines the outcome on its own in most cases.
+
+EVIDENCE THAT IS NOT SUFFICIENT ALONE:
+- An order confirmation or payment receipt without a linked delivery/tracking record. Payment proof does not establish that the item arrived.
+- A shipping label being generated does not constitute proof of delivery; only carrier-confirmed delivery status counts.
+
+IF DELIVERY CANNOT BE CONFIRMED:
+Do not contest without delivery evidence. Absent confirmed delivery, escalate internally rather than submitting a response, since a case without delivery proof is very unlikely to succeed and may be better handled by proactively refunding the customer.
+
+RESPONSE FORMAT:
+Lead with the tracking number and delivered status/date. Confirm the delivery address matches the order's shipping address. If delivery cannot be confirmed, do not submit contest evidence — route to manual review instead.

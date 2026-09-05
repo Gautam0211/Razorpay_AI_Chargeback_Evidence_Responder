@@ -1,0 +1,48 @@
+{
+  "candidates": {
+    "f1_optimal": {
+      "threshold": 0.3263845443725586,
+      "val_metrics": {
+        "threshold": 0.3263845443725586,
+        "precision": 0.5720720720720721,
+        "recall": 0.9144914491449145,
+        "fp_cost": 228000.0,
+        "fn_cost": 93553.09999999999,
+        "total_cost": 321553.1
+      }
+    },
+    "youden_j": {
+      "threshold": 0.532207727432251,
+      "val_metrics": {
+        "threshold": 0.532207727432251,
+        "precision": 0.6584905660377358,
+        "recall": 0.6282628262826283,
+        "fp_cost": 108600.0,
+        "fn_cost": 416123.39,
+        "total_cost": 524723.39
+      }
+    },
+    "cost_optimal": {
+      "threshold": 0.23223223223223222,
+      "val_metrics": {
+        "threshold": 0.23223223223223222,
+        "precision": 0.5411824153612936,
+        "recall": 0.963996399639964,
+        "fp_cost": 272400.0,
+        "fn_cost": 33545.259999999995,
+        "total_cost": 305945.26
+      }
+    }
+  },
+  "chosen_strategy": "cost",
+  "chosen_threshold": 0.23223223223223222,
+  "final_test_metrics": {
+    "threshold": 0.23223223223223222,
+    "precision": 0.534516765285996,
+    "recall": 0.9756975697569757,
+    "fp_cost": 283200.0,
+    "fn_cost": 32786.630000000005,
+    "total_cost": 315986.63
+  },
+  "fight_cost_flat_assumption": 300.0
+}

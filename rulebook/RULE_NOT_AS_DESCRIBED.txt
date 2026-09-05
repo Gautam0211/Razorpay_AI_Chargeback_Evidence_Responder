@@ -1,0 +1,16 @@
+Reason Code: Not As Described
+
+This reason code applies when a cardholder claims the received item or service materially differs from what was advertised at purchase (wrong size, wrong color, damaged on arrival, misrepresented features, or counterfeit claims).
+
+REQUIRED EVIDENCE TO CONTEST:
+- Original product listing or description shown to the customer at time of purchase.
+- Proof of delivery confirming the correct item was shipped (item description/SKU on the shipping manifest).
+- Any customer communication prior to the dispute. The absence of a prior complaint or return request is a meaningful signal that the item was likely as described; a documented prior complaint on file weakens the merchant's position.
+- Photos or listing screenshots showing the item matches the shipped SKU, where available.
+
+EVIDENCE THAT IS NOT SUFFICIENT ALONE:
+- Proof of delivery by itself does not prove the item matched the description; it only proves something was delivered.
+- A generic order confirmation email without a delivery record.
+
+RESPONSE FORMAT:
+State the SKU shipped, confirm it matches the listing description, note whether any complaint was filed before the dispute, and attach delivery confirmation. Keep the response factual and point-by-point against the cardholder's specific claim.

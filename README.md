@@ -101,7 +101,6 @@ flowchart TD
     E --> F
 
     F --> G[Cross-Encoder Reranker]
-    B --> H[Llama 3.1 8B Instruct]
     G --> H
     H --> I[Grounding Validator]
     I --> J[Merchant Dashboard]

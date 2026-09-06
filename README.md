@@ -99,9 +99,8 @@ flowchart TD
 
     R[Synthetic Reason-Specific Rulebook] --> F[Hybrid RAG]
     E --> F
-
     F --> G[Cross-Encoder Reranker]
-    G --> H
+    G --> H[LLM Evidence Generator
     H --> I[Grounding Validator]
     I --> J[Merchant Dashboard]
 ```

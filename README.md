@@ -1,11 +1,11 @@
-[README.md](https://github.com/user-attachments/files/31868343/README.md)
 # AI Risk Manager — Chargeback Evidence Responder
 
 An AI-powered chargeback risk-management system that helps merchants decide which disputes are worth fighting, prioritize operational workload, retrieve relevant evidence rules, generate grounded responses, and validate those responses before they reach the merchant.
 
 Built for the **Razorpay AI Buildathon 2026 — AI Risk Manager** track.
 
-App_Link- https://razorpayaichargebackevidenceresponder-kaxi5pcmfqqcwke4pk2jjp.streamlit.app/
+**Live App:** https://razorpayaichargebackevidenceresponder-kaxi5pcmfqqcwke4pk2jjp.streamlit.app/
+**Demo Video:** https://drive.google.com/drive/folders/1K7DZhmkR1DVGFdmQVQp0n80HXtyIMw-F?usp=sharing
 
 ---
 
@@ -26,6 +26,7 @@ App_Link- https://razorpayaichargebackevidenceresponder-kaxi5pcmfqqcwke4pk2jjp.s
 - [Machine Learning Model](#machine-learning-model)
 - [Evaluation Results](#evaluation-results)
 - [Economic Impact](#economic-impact)
+- [Observability](#observability)
 - [Application Workflow](#application-workflow)
 - [Live Dispute Simulation](#live-dispute-simulation)
 - [Project Structure](#project-structure)
@@ -38,6 +39,9 @@ App_Link- https://razorpayaichargebackevidenceresponder-kaxi5pcmfqqcwke4pk2jjp.s
 - [Security and Privacy](#security-and-privacy)
 - [Limitations](#limitations)
 - [Future Improvements](#future-improvements)
+- [Design Principles](#design-principles)
+- [Architecture Summary](#architecture-summary)
+- [License](#license)
 - [Disclaimer](#disclaimer)
 
 ---
@@ -109,9 +113,9 @@ The LLM is intentionally not responsible for deciding whether a dispute should b
 
 ---
 
-# Key Capabilities
+## Key Capabilities
 
-## 1. Dispute Risk Scoring
+### 1. Dispute Risk Scoring
 
 An XGBoost classifier predicts the probability that the merchant will successfully contest a dispute.
 
@@ -127,9 +131,7 @@ The model uses structured case information including:
 - Dispute reason code
 - Item category
 
----
-
-## 2. Economic Decisioning
+### 2. Economic Decisioning
 
 The predicted probability is combined with the disputed amount and a configurable fighting cost.
 
@@ -141,9 +143,7 @@ The system produces one of three actions:
 
 This separates **model prediction** from **business action**.
 
----
-
-## 3. Operational Prioritization
+### 3. Operational Prioritization
 
 Priority is intentionally separate from win probability.
 
@@ -161,9 +161,7 @@ Priority = 0.6 × normalized amount
 
 This allows a high-value case approaching its response deadline to move upward in the queue even when its predicted win probability is not the highest.
 
----
-
-## 4. Hybrid Evidence Retrieval
+### 4. Hybrid Evidence Retrieval
 
 For each supported dispute reason, the system retrieves relevant sections from a synthetic rulebook using:
 
@@ -174,9 +172,7 @@ For each supported dispute reason, the system retrieves relevant sections from a
 
 The retrieval pipeline narrows the candidate passages before generation.
 
----
-
-## 5. Grounded Response Generation
+### 5. Grounded Response Generation
 
 The LLM receives:
 
@@ -187,9 +183,7 @@ The LLM receives:
 
 It is explicitly instructed not to invent missing evidence or introduce unsupported causal relationships.
 
----
-
-## 6. Response Validation
+### 6. Response Validation
 
 Before a response reaches the merchant, the validator checks for required structure and basic grounding conditions.
 
@@ -197,7 +191,7 @@ Only a validated response is surfaced to the merchant.
 
 ---
 
-# End-to-End Workflow
+## End-to-End Workflow
 
 ```mermaid
 flowchart LR
@@ -245,7 +239,7 @@ Merchant Response
 
 ---
 
-# Decision Engine
+## Decision Engine
 
 The decision engine uses expected value rather than treating the ML probability as the final business decision.
 
@@ -276,9 +270,11 @@ flowchart TD
 
 The review margin is a prototype safety tolerance, not an industry benchmark.
 
+The ₹300 fighting cost falls within Razorpay's own publicly documented range for evidence submission costs (₹200–500) and base chargeback fees (₹500–750), chosen conservatively rather than at either extreme.
+
 ---
 
-# Priority Engine
+## Priority Engine
 
 The priority engine is designed for operational triage rather than prediction.
 
@@ -300,9 +296,9 @@ Priority therefore represents **financial exposure plus urgency**, rather than l
 
 ---
 
-# Data and Evaluation Design
+## Data and Evaluation Design
 
-## Synthetic Dispute Corpus
+### Synthetic Dispute Corpus
 
 Real merchant and customer dispute data is not available to this project. Therefore, the project uses a synthetic dataset designed for reproducible development and evaluation.
 
@@ -340,9 +336,7 @@ The dataset is a **synthetic dispute-case corpus** used for system evaluation.
 
 It is **not** intended to represent a real-world chargeback incidence rate.
 
----
-
-# Train / Validation / Test Split
+### Train / Validation / Test Split
 
 The ML evaluation excludes the unknown `other_unclassified` cases from supervised training/evaluation because there is intentionally no corresponding rulebook entry.
 
@@ -364,7 +358,7 @@ The held-out test set is used only for final reporting.
 
 ---
 
-# Synthetic Rulebook and RAG
+## Synthetic Rulebook and RAG
 
 The rulebook is a synthetic, reason-code-specific policy layer.
 
@@ -374,13 +368,13 @@ The rulebook is:
 
 - Semantically/section chunked
 - Approximately 120 words per target chunk
-- Created with exactly 20-word overlap
-- Stored with metadata
+- Created with a 25-word overlap
+- Stored with metadata (`chunk_id`, `reason_code`, `section`, `source`)
 - Indexed for hybrid retrieval
 
 The final rulebook contains **19 chunks** across the four supported reason codes.
 
-## Retrieval Architecture
+### Retrieval Architecture
 
 ```mermaid
 flowchart TD
@@ -392,13 +386,13 @@ flowchart TD
     C --> E[Reciprocal Rank Fusion]
     D --> E
 
-    E --> F[Top-5 Candidates]
+    E --> F[Top-8 Candidates]
     F --> G[Cross-Encoder Reranker]
     G --> H[Top-3 Evidence Passages]
     H --> I[LLM Context]
 ```
 
-## Embedding Model
+### Embedding Model
 
 ```text
 BAAI/bge-small-en-v1.5
@@ -406,17 +400,15 @@ BAAI/bge-small-en-v1.5
 
 Embeddings are normalized and stored in a local Chroma collection.
 
-## Reranker
+### Reranker
 
 ```text
 cross-encoder/ms-marco-TinyBERT-L-2-v2
 ```
 
-The cross-encoder is used for ranking. Its scores are not interpreted as probabilities.
+A deliberately lightweight (~17MB) cross-encoder, chosen for low-RAM deployment on free-tier hosting rather than for maximum reranking capacity. Its scores are not interpreted as probabilities.
 
----
-
-# Real-World Grounding
+### Real-World Grounding
 
 The evidence categories and general dispute workflow are informed by publicly available payment/dispute documentation.
 
@@ -428,7 +420,7 @@ The application does not claim that the synthetic rulebook represents binding re
 
 ---
 
-# LLM and Grounding
+## LLM and Grounding
 
 The generation layer uses:
 
@@ -438,7 +430,7 @@ meta-llama/Llama-3.1-8B-Instruct
 
 The LLM acts as a communication and evidence-drafting layer, not as the business decision-maker.
 
-## Grounding Principles
+### Grounding Principles
 
 The generation prompt requires the model to:
 
@@ -455,9 +447,7 @@ A key grounding rule is:
 
 > **Do not infer causality or relationships that are not explicitly stated in CASE FACTS. Describe only what each fact directly establishes.**
 
----
-
-# Generated Response Structure
+### Generated Response Structure
 
 The response uses fixed section headers:
 
@@ -476,7 +466,7 @@ The validator checks the generated output before it is shown to the merchant.
 
 ---
 
-# Response Validation
+## Response Validation
 
 The validator acts as a final deterministic safety layer.
 
@@ -499,13 +489,13 @@ flowchart TD
     G -->|No| H[Validated Response]
 ```
 
-The validator is not intended to prove that every generated sentence is legally or factually correct. It is a guardrail against obvious structural, grounding, and contradiction failures.
+The validator is not intended to prove that every generated sentence is legally or factually correct. It is a guardrail against obvious structural, grounding, and contradiction failures. If validation fails, the pipeline retries generation (capped) before falling back to manual review rather than surfacing an unvalidated draft.
 
 ---
 
-# Machine Learning Model
+## Machine Learning Model
 
-## Model
+### Model
 
 ```text
 XGBoost Classifier
@@ -525,18 +515,16 @@ random_state      = fixed seed
 
 No feature scaling is required for the tree-based model.
 
-## Features
+### Features
 
-### Numeric
-
+**Numeric**
 ```text
 amount
 days_to_dispute
 prior_dispute_count_at_time
 ```
 
-### Boolean
-
+**Boolean**
 ```text
 delivery_confirmed
 otp_auth_confirmed
@@ -544,24 +532,22 @@ shipping_billing_match
 prior_complaint_on_file
 ```
 
-### Categorical
-
+**Categorical**
 ```text
 reason_code
 item_category
 ```
 
-### Label
-
+**Label**
 ```text
 outcome_true
 ```
 
----
+The exact formula used to generate `outcome_true` — including per-feature weights, the reason-code-specific modifiers, and the noise model — is fully disclosed in [`synthetic-labels-disclosure.pdf`](synthetic-labels-disclosure.pdf) for judge/evaluator transparency. That formula (`true_win_probability`) is never used as a model feature or label; only the noisy sampled `outcome_true` is used for training.
 
-# Threshold Selection
+### Threshold Selection
 
-The model's operating threshold is selected on the validation set using an explicit cost function rather than simply maximizing accuracy.
+The model's operating threshold is selected on the validation set using an explicit cost function (minimizing total ₹ cost of false positives and false negatives) rather than simply maximizing accuracy or F1. Three strategies — F1-optimal, Youden's J, and cost-optimal — were compared explicitly on validation before selecting cost-optimal as final.
 
 Selected threshold:
 
@@ -569,13 +555,11 @@ Selected threshold:
 0.232
 ```
 
-The final held-out test set is not used for threshold selection.
-
-This keeps the test set independent for final performance reporting.
+The final held-out test set is not used for threshold selection. This keeps the test set independent for final performance reporting.
 
 ---
 
-# Evaluation Results
+## Evaluation Results
 
 The final ML evaluation is performed on the held-out test set.
 
@@ -599,11 +583,15 @@ Actual 0     193      944
 Actual 1      27     1084
 ```
 
-The model is deliberately presented as a **risk signal rather than a certainty**. The ROC-AUC and PR-AUC indicate moderate discrimination rather than perfect prediction.
+The model is deliberately presented as a **risk signal rather than a certainty**. The ROC-AUC and PR-AUC indicate moderate discrimination rather than perfect prediction. The model is tuned for high recall on winnable disputes (97.6%), accepting lower precision — deliberate given the cost asymmetry between missing a winnable dispute and fighting a losing one.
+
+### Feature Importance
+
+SHAP analysis on the held-out test set (see `figures/shap_beeswarm.png`) shows `delivery_confirmed` and `otp_auth_confirmed` as the two strongest predictors — consistent with the weighting used in the synthetic label generator, confirming the model recovered genuine structure from noisy outcomes rather than overfitting.
 
 ---
 
-# Economic Impact
+## Economic Impact
 
 The system evaluates decisions using an explicit operational fighting-cost assumption.
 
@@ -621,14 +609,16 @@ On the held-out test set, the modeled total error cost is approximately:
 
 This combines:
 
-- Fight-related operational cost
-- Money left on the table from disputes not successfully contested
+- Fight-related operational cost (cases fought but lost)
+- Money left on the table (winnable disputes wrongly conceded)
 
-The ₹300 fighting cost is a **configurable prototype assumption**, not an industry benchmark.
+The ₹300 fighting cost is a **configurable prototype assumption**, not an industry benchmark, though it was set within a range grounded in Razorpay's own published cost documentation (see [Decision Engine](#decision-engine)).
 
----
+### Review-Margin Sensitivity
 
-# Final Decision Distribution
+The `REVIEW_MARGIN` parameter was tuned by sweeping candidate values on the **validation set** and comparing money-left-on-table against manual-review workload, rather than picked arbitrarily. See `figures/review_margin_sensitivity.png` for the full trade-off curve.
+
+### Final Decision Distribution
 
 On the held-out test set, the current decision engine produced:
 
@@ -642,11 +632,19 @@ This demonstrates the intended operating principle: the system does not automati
 
 ---
 
-# Application Workflow
+## Observability
+
+Every pipeline stage — case loading, ML scoring, decisioning, retrieval, reranking, generation, and validation — is instrumented with LangSmith's `@traceable` decorator, producing a full per-dispute trace tree for debugging, demoing, and auditability. A single dispute's entire journey through the system can be inspected as one nested trace.
+
+Tracing degrades gracefully to a no-op if LangSmith is not configured, so the pipeline runs identically with or without an active LangSmith project.
+
+---
+
+## Application Workflow
 
 The Streamlit application contains the following operational views.
 
-## Overview
+### Overview
 
 Provides a high-level view of:
 
@@ -655,7 +653,7 @@ Provides a high-level view of:
 - Operational status
 - Live simulation state
 
-## Priority Queue
+### Priority Queue
 
 Allows the merchant to:
 
@@ -664,7 +662,7 @@ Allows the merchant to:
 - Inspect financial exposure
 - Open individual cases
 
-## Dispute Analysis
+### Dispute Analysis
 
 Runs the complete case pipeline:
 
@@ -688,21 +686,21 @@ Validation
 Evidence Response
 ```
 
-## Model Performance
+### Model Performance
 
-Displays held-out model evaluation metrics.
+Displays held-out model evaluation metrics, confusion matrix, and SHAP feature importance.
 
-## Economic Impact
+### Economic Impact
 
-Displays modeled decision costs and business-oriented outcomes.
+Displays modeled decision costs, review-margin sensitivity, and business-oriented outcomes.
 
-## Manual Analysis
+### Manual Analysis
 
-Allows a manually supplied case to pass through the same shared processing path.
+Allows a manually supplied case to pass through the same shared processing path (`pipeline.process_case`) as the stored queue — no separate scoring, decision, or RAG logic exists for manually entered cases. Manually analyzed cases are clearly labeled as "Manual Analysis — Not part of the stored queue" and never contaminate the 15,000-case historical queue.
 
 ---
 
-# Live Dispute Simulation
+## Live Dispute Simulation
 
 The application includes a lightweight incoming-dispute simulation.
 
@@ -723,24 +721,32 @@ Important properties:
 - Live cases use the same decision logic.
 - Queue refresh does not call the LLM for every incoming case.
 - Held-out evaluation metrics remain separate from live simulation activity.
-- The simulation does not represent real payment-provider webhooks.
+- The simulation does not represent real payment-provider webhooks (see [Limitations](#limitations)).
 
 ---
 
-# Project Structure
-
-The current repository intentionally remains close to the working development structure to minimize runtime path changes.
+## Project Structure
 
 ```text
 AI_Chargeback_Evidence_Responder/
 │
-├── app.py
-├── pipeline.py
-├── generator.py
-├── validator.py
-├── retriever.py
-├── generate_incoming_pool.py
+├── app.py                        # Streamlit dashboard entry point
+├── pipeline.py                   # DisputePipeline — the single source of truth for scoring/decision/RAG/generation/validation
+├── generator.py                  # Grounded LLM evidence-response generation
+├── validator.py                  # Post-generation structural/grounding checks
+├── retriever.py                  # Hybrid (BM25 + BGE) retriever with RRF fusion
+├── reranker.py                   # Cross-encoder reranker
+├── chunking.py                   # Semantic/section-based rulebook chunker
+├── embeddings.py                 # Embeds rulebook chunks into ChromaDB
+├── generate_data.py              # Synthetic orders/disputes/golden-answers generator
+├── generate_rulebook.py          # Synthetic reason-code rulebook generator
+├── generate_golden_eval_dataset.py  # 60-case DeepEval golden retrieval dataset
+├── generate_incoming_pool.py     # Synthetic pool for live dispute simulation
+├── evaluate_retriever.py         # Reason-code level Recall@8 / Precision@3 eval
+├── retriever_eval_results.json   # Saved retriever evaluation results
 ├── requirements.txt
+├── Architecture.pdf              # Full architecture diagram (exported)
+├── synthetic-labels-disclosure.pdf  # Full disclosure of outcome_true generation formula
 ├── README.md
 ├── .gitignore
 │
@@ -752,66 +758,82 @@ AI_Chargeback_Evidence_Responder/
 │
 ├── models/
 │   ├── xgb_scorer.joblib
-│   └── feature_columns.json
+│   ├── feature_columns.json
+│   ├── threshold.json
+│   ├── metrics_summary.json
+│   ├── threshold_comparison.json
+│   └── review_margin_sweep.json
+│
+├── ML Model/                     # Model training / threshold selection / figure-generation scripts
+│
+├── figures/
+│   ├── shap_beeswarm.png
+│   ├── confusion_matrix.png
+│   ├── review_margin_sensitivity.png
+│   └── economic_error_cost.png
 │
 ├── rulebook/
 │   ├── RULE_NOT_AS_DESCRIBED.txt
 │   ├── RULE_ITEM_NOT_RECEIVED.txt
 │   ├── RULE_UNAUTHORIZED_TRANSACTION.txt
-│   └── RULE_DUPLICATE_CHARGE.txt
+│   ├── RULE_DUPLICATE_CHARGE.txt
+│   ├── rulebook_metadata.json
+│   └── chunks.jsonl
 │
-└── chroma_db/
+└── chroma_db/                    # Persisted vector store (committed so retrieval works without re-embedding on deploy)
 ```
 
 Runtime state such as the live simulation state is excluded from version control.
 
 ---
 
-# Technology Stack
+## Technology Stack
 
 | Layer | Technology |
 |---|---|
 | Language | Python |
 | ML | XGBoost, scikit-learn |
+| Explainability | SHAP |
 | Data Processing | pandas, NumPy |
-| Vector Store | Chroma |
+| Vector Store | Chroma (persistent local) |
 | Semantic Retrieval | BAAI/bge-small-en-v1.5 |
-| Lexical Retrieval | BM25 |
+| Lexical Retrieval | BM25 (rank_bm25) |
+| Retrieval Fusion | Reciprocal Rank Fusion (RRF) |
 | Reranking | ms-marco-TinyBERT-L-2-v2 |
 | LLM | Llama 3.1 8B Instruct |
-| LLM Inference | Hugging Face Inference |
+| LLM Inference | Hugging Face Inference API |
+| Evaluation | DeepEval (retrieval + faithfulness metrics) |
+| Observability | LangSmith (`@traceable` tracing on all pipeline stages) |
 | UI | Streamlit |
 | Model Persistence | joblib |
 | Environment Configuration | python-dotenv |
 
 ---
 
-# Installation
+## Installation
 
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Gautam0211/Razorpay_AI_Chargeback_Evidence_Responder.git
 cd Razorpay_AI_Chargeback_Evidence_Responder
 ```
 
-## 2. Create a Virtual Environment
+### 2. Create a Virtual Environment
 
-### Windows PowerShell
-
+**Windows PowerShell**
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-### Linux / macOS
-
+**Linux / macOS**
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-## 3. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -819,23 +841,29 @@ pip install -r requirements.txt
 
 ---
 
-# Configuration
+## Configuration
 
-Create a `.env` file in the project root:
+Copy the example environment file and fill in your own credentials:
 
-```env
-HF_TOKEN=your_huggingface_token
+```bash
+cp .env.example .env
 ```
 
-The token is used for LLM inference.
+`.env.example`:
+```env
+HF_TOKEN=
+LANGSMITH_API_KEY=
+LANGSMITH_PROJECT=
+```
 
-Do not commit `.env` or any API credentials to Git.
+- `HF_TOKEN` is used for LLM inference via the Hugging Face Inference API.
+- `LANGSMITH_API_KEY` / `LANGSMITH_PROJECT` are optional — tracing is skipped gracefully if unset.
 
-The repository `.gitignore` excludes environment secrets.
+Do not commit `.env` or any API credentials to Git. The repository `.gitignore` excludes environment secrets.
 
 ---
 
-# Running the Application
+## Running the Application
 
 Start the Streamlit application:
 
@@ -843,13 +871,11 @@ Start the Streamlit application:
 streamlit run app.py
 ```
 
-The terminal will display the local Streamlit URL.
-
-Open that URL in a browser to access the dashboard.
+The terminal will display the local Streamlit URL. Open that URL in a browser to access the dashboard.
 
 ---
 
-# Generating the Incoming Dispute Pool
+## Generating the Incoming Dispute Pool
 
 The live simulation uses:
 
@@ -857,29 +883,21 @@ The live simulation uses:
 data/incoming_disputes.csv
 ```
 
-The generator is located in the project root.
-
 Run:
 
 ```bash
 python generate_incoming_pool.py
 ```
 
-This creates:
-
-```text
-data/incoming_disputes.csv
-```
-
-The application releases cases from this pool in batches of 10.
+This creates `data/incoming_disputes.csv`. The application releases cases from this pool in batches of 10.
 
 ---
 
-# Reproducibility and Leakage Controls
+## Reproducibility and Leakage Controls
 
 The project separates model development, model selection, and final evaluation.
 
-## Held-out test set
+### Held-out test set
 
 The test set is not used for:
 
@@ -887,25 +905,21 @@ The test set is not used for:
 - Threshold selection
 - Final decision-margin selection
 
-The threshold is selected using validation data.
+The threshold is selected using validation data only, via an explicit cost-minimization sweep (not accuracy/F1), compared against F1-optimal and Youden's J before final selection.
 
-## Golden Answers
+### Golden Answers
 
-`golden_answers.csv` acts as an offline evaluation/answer key.
+`golden_answers.csv` acts as an offline evaluation/answer key. It contains the hidden `true_win_probability` generating formula's output, the sampled `outcome_true` label, the correct retrieval chunk mapping, and the expected agentic trajectory per case.
 
-It contains information used to evaluate synthetic outcomes and retrieval expectations.
+These fields are not exposed to the runtime pipeline, LLM, or decision logic as case evidence — they are read only by offline evaluation scripts.
 
-These fields are not exposed to the runtime LLM or decision logic as case evidence.
+### Unknown Reason-Code Cases
 
-## Unknown Reason-Code Cases
-
-`other_unclassified` cases are intentionally excluded from supervised model training/evaluation because there is no corresponding rulebook entry.
-
-This provides an explicit edge case for fallback behavior rather than silently fabricating a rule.
+`other_unclassified` cases are intentionally excluded from supervised model training/evaluation because there is no corresponding rulebook entry. This provides an explicit edge case for fallback behavior rather than silently fabricating a rule — retrieval returns "no rule found" by construction (the reason code has zero matching chunks), and the pipeline routes straight to manual review without ever invoking the LLM.
 
 ---
 
-# Security and Privacy
+## Security and Privacy
 
 The project is designed around synthetic data for the hackathon.
 
@@ -914,7 +928,7 @@ No real customer payment credentials, card numbers, authentication secrets, or p
 Security principles include:
 
 - API credentials stored in environment variables
-- `.env` excluded from version control
+- `.env` excluded from version control (`.env.example` provided instead)
 - No production customer data in the synthetic evaluation corpus
 - LLM restricted to supplied case facts and retrieved rules
 - Generated responses validated before presentation
@@ -934,92 +948,58 @@ For a production deployment, additional controls would be required, including:
 
 ---
 
-# Limitations
+## Limitations
 
 This is a hackathon prototype and should not be interpreted as a production chargeback adjudication system.
 
-## 1. Synthetic Data
-
-The ML evaluation uses synthetic disputes rather than proprietary merchant data.
-
-## 2. Synthetic Rulebook
-
-The evidence rules are created for reproducible evaluation and are not authoritative card-network or legal rules.
-
-## 3. Moderate Model Discrimination
-
-The reported ROC-AUC and PR-AUC indicate that the model should be treated as a risk signal, not a definitive predictor.
-
-## 4. Response-Window Proxy
-
-The current priority calculation uses a configurable 20-day response-window proxy.
-
-## 5. Prototype Cost Assumptions
-
-The ₹300 fighting cost is an explicit configurable assumption.
-
-## 6. LLM Inference
-
-Response generation depends on external LLM inference availability and latency.
-
-## 7. Human-in-the-Loop
-
-Manual review is represented as a decision outcome, but a complete human approval workflow is a future production enhancement.
-
-## 8. Live Simulation
-
-Incoming disputes are simulated rather than received from production payment-provider webhooks.
+1. **Synthetic Data** — The ML evaluation uses synthetic disputes rather than proprietary merchant data.
+2. **Synthetic Rulebook** — The evidence rules are created for reproducible evaluation and are not authoritative card-network or legal rules.
+3. **Moderate Model Discrimination** — The reported ROC-AUC and PR-AUC indicate that the model should be treated as a risk signal, not a definitive predictor.
+4. **Response-Window Proxy** — The current priority calculation uses a configurable 20-day response-window proxy.
+5. **Prototype Cost Assumptions** — The ₹300 fighting cost is an explicit configurable assumption.
+6. **LLM Inference** — Response generation depends on external LLM inference availability and latency.
+7. **Human-in-the-Loop** — Manual review is represented as a decision outcome, but a complete human approval/edit/reject workflow is a future production enhancement.
+8. **Live Simulation** — Incoming disputes are simulated rather than received from production payment-provider webhooks. A real integration would use Razorpay's webhook mechanism; this could not be exercised in the hackathon sandbox since test-mode payments do not generate real bank-initiated disputes.
+9. **Reranker Capacity** — The cross-encoder reranker was deliberately chosen for minimal RAM footprint over maximum ranking quality, appropriate at this corpus size (19 chunks) but not necessarily at larger scale.
 
 ---
 
-# Future Improvements
-
-Potential production extensions include:
+## Future Improvements
 
 - Probability calibration
 - Merchant-specific model training
-- Cost-sensitive decision policies
-- Human approval workflows for high-value disputes
+- Cost-sensitive decision policies incorporating a real cost for manual review time
+- Human approval workflows (Approve/Edit/Reject) for high-value disputes
 - Production webhook ingestion
 - Payment-provider API integration
 - Real-time evidence collection
 - Document-level provenance
 - Automated audit trails
-- Retrieval and generation observability
+- Full RAGAS-style generation eval triad (answer relevancy, context precision/recall at generation time)
 - Model drift monitoring
 - Rulebook versioning
 - PII-aware data handling
 - Role-based access control
 - Production-grade secrets management
-- Graph-based workflow orchestration as workflow complexity increases
+- Graph-based workflow orchestration (LangGraph) as workflow complexity increases
 
 ---
 
-# Design Principles
+## Design Principles
 
-## Separate Prediction from Action
+**Separate Prediction from Action** — The ML model estimates case strength. The deterministic decision engine decides what action makes economic sense.
 
-The ML model estimates case strength. The deterministic decision engine decides what action makes economic sense.
+**Separate Priority from Probability** — A case can be operationally urgent because of financial exposure and response timing even when it is not the highest-probability case.
 
-## Separate Priority from Probability
+**Ground Generation** — The LLM communicates supplied evidence rather than inventing evidence.
 
-A case can be operationally urgent because of financial exposure and response timing even when it is not the highest-probability case.
+**Validate Before Presentation** — Generated responses pass through deterministic checks before reaching the merchant.
 
-## Ground Generation
-
-The LLM communicates supplied evidence rather than inventing evidence.
-
-## Validate Before Presentation
-
-Generated responses pass through deterministic checks before reaching the merchant.
-
-## Be Transparent About Evaluation
-
-Synthetic data, assumptions, limitations, and held-out metrics are explicitly disclosed.
+**Be Transparent About Evaluation** — Synthetic data, assumptions, limitations, and held-out metrics are explicitly disclosed, including the full formula used to generate training labels.
 
 ---
 
-# Architecture Summary
+## Architecture Summary
 
 ```mermaid
 flowchart LR
@@ -1033,9 +1013,17 @@ flowchart LR
 
 The system connects structured ML prediction with economic decisioning, operational prioritization, evidence retrieval, grounded response generation, and deterministic validation.
 
+See [`Architecture.pdf`](Architecture.pdf) for the full exported architecture diagram.
+
 ---
 
-# Disclaimer
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for details.
+
+---
+
+## Disclaimer
 
 This project is a hackathon prototype created for the **Razorpay AI Buildathon 2026**.
 

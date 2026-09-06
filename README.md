@@ -96,15 +96,13 @@ flowchart TD
     B --> C[XGBoost Risk Scorer]
     C --> D[Decision Engine]
     D --> E[Priority Engine]
-
     R[Synthetic Reason-Specific Rulebook] --> F[Hybrid RAG]
     E --> F
     F --> G[Cross-Encoder Reranker]
-    G --> H[LLM Evidence Generator
+    G --> H[LLM Evidence Generator]
     H --> I[Grounding Validator]
     I --> J[Merchant Dashboard]
 ```
-
 The LLM is intentionally not responsible for deciding whether a dispute should be fought. That decision is made before generation using deterministic business logic.
 
 ---

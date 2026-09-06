@@ -1,26 +1,16 @@
 numpy
 pandas
 faker
+python-dotenv
+joblib
 scikit-learn
 xgboost
 shap
-
-# RAG / vector store
 chromadb
 sentence-transformers
-
-# LLM + orchestration
+rank-bm25
 huggingface_hub
-langgraph
-langchain
-langchain-community
 requests
-
-# Eval
 deepeval
-
-# UI
-gradio
-
-# Utils
-python-dotenv
+streamlit
+langsmith

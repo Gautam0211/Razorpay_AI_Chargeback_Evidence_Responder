@@ -23,7 +23,6 @@ env/
 # Generated / Runtime Data
 # =========================
 data/live_simulation_state.json
-data/incoming_disputes.csv
 
 # =========================
 # Logs / Cache
